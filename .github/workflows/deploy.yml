@@ -11,13 +11,18 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Prepare SSH key
+        shell: bash
         run: |
-          mkdir -p ~/.ssh
-          echo "${{secrets.SSH_PRIVATE_KEY}}" > ~/.ssh/meinPrivateKey
-          chmod 600 ~/.ssh/meinPrivateKey
+            mkdir -p ~/.ssh
+            printf '%s\n' "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/meinPrivateKey
+            sed -i 's/\r$//' ~/.ssh/meinPrivateKey
+            chmod 600 ~/.ssh/meinPrivateKey
 
       - name: Trust host
-        run: ssh-keyscan -H ${{ secrets.EC2_IP }} >> ~/.ssh/known_hosts
+        shell: bash
+        run: |
+            mkdir -p ~/.ssh
+            ssh-keyscan -H ${{ secrets.EC2_IP }} >> ~/.ssh/known_hosts || true
 
       - name: Copy frontend to EC2
         run: scp -i ~/.ssh/meinPrivateKey -r ./frontend ubuntu@${{ secrets.EC2_IP }}:/home/ubuntu/frontend
