@@ -1,0 +1,46 @@
+name: Test and deployment from mehrwertsteuer
+
+on: push
+
+jobs:
+    test:
+        runs-on: ubuntu-latest
+        steps:
+            - name: checkout repo
+              uses: actions/checkout@v5
+
+            - name: Setup Nodejs
+              uses: actions/setup-node@v4
+              with:
+                node-version: "20"  
+
+            - name: install dependencies
+              run: |
+                cd testing_example
+                npm install
+
+            - name: test
+              run: |
+                cd testing_example
+                npm test
+
+
+    deploy:
+        needs: test
+        runs-on: ubuntu-latest
+        steps:
+            - name: checkout repo
+              uses: actions/checkout@v5
+
+            - name: ssh setup
+              run: |
+                mkdir -p ~/.ssh
+                echo "${{secrets.SSH_PRIVATE_KEY}}" > ~/.ssh/meinPrivateKey
+                chmod 400 ~/.ssh/meinPrivateKey
+                ssh-keyscan -H ${{secrets.EC2_IP}} >> ~/.ssh/known_hosts
+
+            - name: copy mwst.js to EC2 machine
+              run: |
+                scp ~/.ssh/meinPrivateKey testing_example/mwst.js ubuntu@{{secrets.EC2_IP}}:/home/ubuntu
+
+        

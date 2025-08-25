@@ -1,4 +1,4 @@
-name: Restart Weeb
+name: Restart Web
 on:
   workflow_dispatch:
 

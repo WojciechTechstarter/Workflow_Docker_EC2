@@ -27,6 +27,11 @@ jobs:
       - name: Copy frontend to EC2
         run: scp -i ~/.ssh/meinPrivateKey -r ./frontend ubuntu@${{ secrets.EC2_IP }}:/home/ubuntu/frontend
 
+      - name: install nginxx
+        run: |
+          ssh -i ~/.ssh/meinPrivateKey ubuntu@${{secrets.EC2_IP}} "sudo apt update"
+          ssh -i ~/.ssh/meinPrivateKey ubuntu@${{secrets.EC2_IP}} "sudo apt install nginx -y"
+
       - name: Build & Run on EC2
         run: |
           ssh -i ~/.ssh/meinPrivateKey ubuntu@${{ secrets.EC2_IP }} "
