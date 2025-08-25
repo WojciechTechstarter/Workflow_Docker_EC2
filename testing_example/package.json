@@ -1,7 +1,7 @@
 {
   "name": "testing_example",
   "version": "1.0.0",
-  "main": "mwstr.js",
+  "main": "mwst.js",
   "scripts": {
     "test": "jest"
   },

@@ -1,4 +1,4 @@
-const { mwst, brutto } = require("./mwstr.js")
+const { mwst, brutto } = require("./mwst.js")
 
 test("7% von 100 soll 7 sein", () => {
     expect(mwst(100, 0.07)).toBe(7)
