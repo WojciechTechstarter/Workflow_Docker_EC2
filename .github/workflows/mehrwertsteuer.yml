@@ -41,6 +41,6 @@ jobs:
 
             - name: copy mwst.js to EC2 machine
               run: |
-                scp ~/.ssh/meinPrivateKey testing_example/mwst.js ubuntu@{{secrets.EC2_IP}}:/home/ubuntu
+                scp -i ~/.ssh/meinPrivateKey testing_example/mwst.js ubuntu@${{secrets.EC2_IP}}:/home/ubuntu
 
         
