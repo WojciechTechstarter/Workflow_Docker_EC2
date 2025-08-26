@@ -1,4 +1,4 @@
-name: Test and deployment from mehrwertsteuer.test.js
+name: Test, coverage, Slack messsage, deployment
 
 on: push
 
@@ -6,6 +6,14 @@ jobs:
     test:
         runs-on: ubuntu-latest
         steps:
+            - name: Post a message in Slack channel
+              uses: slackapi/slack-github-actioon@v2.1.1
+              with:
+                webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+                webhook-type: incomming-webhook
+                payload: |
+                  text: "Pipeline has just started. Pipeline: ${{github.workflow}}"
+
             - name: checkout repo
               uses: actions/checkout@v5
 
@@ -23,6 +31,13 @@ jobs:
               run: |
                 cd testing_example
                 npm test
+
+
+            - name: coverage upload
+              uses: actions/upload-artifact@v4
+              with:
+                name: coverage report
+                path: testing_example\coverage
 
 
     deploy:
