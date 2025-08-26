@@ -39,6 +39,15 @@ jobs:
                 name: coverage report
                 path: testing_example\coverage
 
+            - name: Post a message in Slack channel
+              if: ${{success()}}
+              uses: slackapi/slack-github-action@v2.1.1
+              with:
+                webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+                webhook-type: incoming-webhook
+                payload: |
+                  text: "Test job has finished successfully. Pipeline: (${{github.workflow}}) will continue"
+
 
     deploy:
         needs: test
@@ -57,5 +66,23 @@ jobs:
             - name: copy mwst.js to EC2 machine
               run: |
                 scp -i ~/.ssh/meinPrivateKey testing_example/mwst.js ubuntu@${{secrets.EC2_IP}}:/home/ubuntu
+
+            - name: Post a message in Slack channel
+              if: ${{failure()}}
+              uses: slackapi/slack-github-action@v2.1.1
+              with:
+                webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+                webhook-type: incoming-webhook
+                payload: |
+                  text: "Workflow was unsuccessfull. Error during deployment. Pipeline: ${{github.workflow}}"
+
+            - name: Post a message in Slack channel
+              if: ${{success()}}
+              uses: slackapi/slack-github-action@v2.1.1
+              with:
+                webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+                webhook-type: incoming-webhook
+                payload: |
+                  text: "Second job is completed. The file was copied to ec2 VM. Pipeline: ${{github.workflow}}"
 
         
