@@ -18,7 +18,6 @@ jobs:
               run: |
                 cd testing_example
                 npm install
-                npm install jest
 
             - name: test
               run: |
